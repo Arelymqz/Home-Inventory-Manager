@@ -72,13 +72,7 @@ export default function HomeScreen() {
       <Text style={styles.title}>HOME INVENTORY ITEMS</Text>
 
       {/* Search Bar */}
-      <TextInput
-        style={styles.searchBar}
-        placeholder="Search items..." // Placeholder text
-        placeholderTextColor="#cad5c2" // Optional: Set placeholder text color
-        value={searchQuery}
-        onChangeText={setSearchQuery}
-      />
+      <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
 
       {/* Display Items */}
       <FlatList
@@ -141,16 +135,6 @@ const styles = StyleSheet.create({
     color: '#858877',
     marginBottom: 10,
     textAlign: 'center',
-  },
-  searchBar: {
-    height: 35,
-    borderColor: '#adc178',
-    borderWidth: 1,
-    borderRadius: 12,
-    paddingHorizontal: 10,
-    marginHorizontal: 20,
-    marginBottom: 10,
-    backgroundColor: '#fff',
   },
   itemContainer: { flexDirection: 'row', justifyContent: 'space-between', padding: 10, borderBottomWidth: 1 },
   itemDetails: { flex: 1 },
