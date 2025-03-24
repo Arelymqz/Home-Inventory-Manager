@@ -23,11 +23,11 @@ const styles = StyleSheet.create({
     height: 40,
     borderColor: '#adc178',
     borderWidth: 1,
-    borderRadius: 12,
+    borderRadius: 15,
     paddingHorizontal: 10,
     marginHorizontal: 20,
     marginBottom: 10,
-    backgroundColor: '#fff',
+    backgroundColor: '#eff1ef',
   },
 });
 

@@ -4,8 +4,11 @@ import { Ionicons } from '@expo/vector-icons'; // Import Ionicons for the menu i
 import { getInventoryItemsDB, removeItemFromInventoryDB, setupDatabase } from '../database/ItemDatabase';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import SearchBar from '../components/SearchBar'; // Import SearchBar component
+import { useRouter } from 'expo-router'; // Import useRouter
 
 export default function HomeScreen() {
+  const router = useRouter(); // Use router for navigation
+
   const [items, setItems] = useState<Array<{
     id: string;
     name: string;
@@ -56,6 +59,14 @@ export default function HomeScreen() {
     console.log("Menu button pressed. Display options like 'Profile'.");
   };
 
+  const handleSortPress = () => {
+    console.log("Sort button pressed. Implement sorting logic here.");
+  };
+
+  const handleAddPress = () => {
+    router.push('/addItem'); // Navigate to the addItem screen
+  };
+
   return (
     <View style={styles.container}>
       {/* Header Container */}
@@ -74,6 +85,16 @@ export default function HomeScreen() {
       {/* Search Bar */}
       <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
 
+      {/* Sort and Add Buttons Container */}
+      <View style={styles.actionContainer}>
+        <TouchableOpacity onPress={handleSortPress} style={styles.iconButton}>
+          <Ionicons name="funnel" size={24} color="#adc178" />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={handleAddPress} style={styles.iconButton}>
+          <Ionicons name="add-circle" size={24} color="#adc178" />
+        </TouchableOpacity>
+      </View>
+
       {/* Display Items */}
       <FlatList
         data={filteredItems} // Use filtered items
@@ -91,15 +112,16 @@ export default function HomeScreen() {
         )}
         ListEmptyComponent={<Text style={styles.emptyText}>No items found.</Text>}
       />
-
-      {/* Add Item Button - Navigate to AddItemScreen */}
-      <Button title="Add Item" onPress={() => console.log("Navigate to Add Item Screen")} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 0 },
+  container: { 
+    flex: 1, 
+    padding: 0,
+    backgroundColor: '#ffffff', 
+  },
   headerContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -108,7 +130,7 @@ const styles = StyleSheet.create({
     paddingVertical: 18,
     paddingHorizontal: 20,
     backgroundColor: '#adc178', // Updated background color
-    marginBottom: 15,
+    marginBottom: 20,
     borderBottomLeftRadius: 18, // Rounded bottom-left corner
     borderBottomRightRadius: 18, // Rounded bottom-right corner
   },
@@ -131,9 +153,9 @@ const styles = StyleSheet.create({
   },
   title: { 
     fontSize: 24, 
-    fontWeight: '800', 
+    fontWeight: '700', 
     color: '#858877',
-    marginBottom: 10,
+    marginBottom: 15,
     textAlign: 'center',
   },
   itemContainer: { flexDirection: 'row', justifyContent: 'space-between', padding: 10, borderBottomWidth: 1 },
@@ -141,4 +163,14 @@ const styles = StyleSheet.create({
   itemText: { fontSize: 18, fontWeight: 'bold' },
   itemSubText: { fontSize: 14, color: 'gray' },
   emptyText: { fontSize: 16, color: 'gray', textAlign: 'center', marginTop: 20 },
+  actionContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginHorizontal: 20,
+    marginBottom: 10,
+  },
+  iconButton: {
+    padding: 10,
+  },
 });
