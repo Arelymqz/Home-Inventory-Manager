@@ -181,9 +181,12 @@ const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: '#a6a9a0',
+    backgroundColor: '#fff',
+    color: '#292b26',
     borderRadius: 5,
-    padding: 5,
+    padding: 6,
+    marginTop: 4,
     marginBottom: 5,
   },
 });

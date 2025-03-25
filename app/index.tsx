@@ -158,7 +158,7 @@ const styles = StyleSheet.create({
     fontSize: 35, // Smaller font size for "Hello,"
     fontStyle: 'italic',
     color: '#f0ead2',
-    marginTop: 34,
+    marginTop: 36,
     marginLeft: 5,
   },
   headerTextLarge: {
