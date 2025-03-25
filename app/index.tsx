@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, Button, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
-import { Ionicons } from '@expo/vector-icons'; // Import Ionicons for the menu icon
+import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import { Ionicons } from '@expo/vector-icons'; // Import Ionicons for icons
 import { getInventoryItemsDB, removeItemFromInventoryDB, setupDatabase } from '../database/ItemDatabase';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import SearchBar from '../components/SearchBar'; // Import SearchBar component
 import { useRouter } from 'expo-router'; // Import useRouter
 import { useFocusEffect } from '@react-navigation/native';
 import ItemCard from '../components/itemCard'; // Import ItemCard component
+import SearchBar from '../components/SearchBar'; // Import SearchBar component
 
 export default function HomeScreen() {
   const router = useRouter(); // Use router for navigation
@@ -22,6 +21,8 @@ export default function HomeScreen() {
 
   const [searchQuery, setSearchQuery] = useState(''); // State for search query
   const [filteredItems, setFilteredItems] = useState(items); // State for filtered items
+  const [sortMenuVisible, setSortMenuVisible] = useState(false); // State for sort menu visibility
+
   // Fetch items from database when screen loads or when navigating back
   useFocusEffect(
     React.useCallback(() => {
@@ -48,22 +49,14 @@ export default function HomeScreen() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    try {
-      await removeItemFromInventoryDB(id); // Await the promise returned by removeItemFromInventoryDB
-      fetchItems(); // Refresh the list after deletion
-    } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      console.error('❌ Error deleting item:', errorMessage);
-    }
-  };
-
-  const handleMenuPress = () => {
-    console.log("Menu button pressed. Display options like 'Profile'.");
-  };
-
-  const handleSortPress = () => {
-    console.log("Sort button pressed. Implement sorting logic here.");
+  const handleSort = (criterion: keyof typeof items[0]) => {
+    const sortedItems = [...items].sort((a, b) => {
+      if (a[criterion] < b[criterion]) return -1;
+      if (a[criterion] > b[criterion]) return 1;
+      return 0;
+    });
+    setItems(sortedItems); // Update the items state with sorted items
+    setSortMenuVisible(false); // Hide the sort menu
   };
 
   const handleAddPress = () => {
@@ -78,7 +71,7 @@ export default function HomeScreen() {
           <Text style={styles.headerTextSmall}>Hello,</Text>
           <Text style={styles.headerTextLarge}>Arely!</Text>
         </View>
-        <TouchableOpacity onPress={handleMenuPress}>
+        <TouchableOpacity onPress={() => console.log("Menu button pressed.")}>
           <Ionicons name="menu" size={35} color="#f0ead2" />
         </TouchableOpacity>
       </View>
@@ -90,13 +83,34 @@ export default function HomeScreen() {
 
       {/* Sort and Add Buttons Container */}
       <View style={styles.actionContainer}>
-        <TouchableOpacity onPress={handleSortPress} style={styles.iconButton}>
+        <TouchableOpacity onPress={() => setSortMenuVisible(!sortMenuVisible)} style={styles.iconButton}>
           <Ionicons name="funnel" size={24} color="#adc178" />
         </TouchableOpacity>
         <TouchableOpacity onPress={handleAddPress} style={styles.iconButton}>
           <Ionicons name="add-circle" size={24} color="#adc178" />
         </TouchableOpacity>
       </View>
+
+      {/* Sort Menu */}
+      {sortMenuVisible && (
+        <View style={styles.sortMenu}>
+          <TouchableOpacity onPress={() => handleSort('name')}>
+            <Text style={styles.sortMenuItem}>Name</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => handleSort('category')}>
+            <Text style={styles.sortMenuItem}>Category</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => handleSort('location')}>
+            <Text style={styles.sortMenuItem}>Location</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => handleSort('purchase_date')}>
+            <Text style={styles.sortMenuItem}>Purchase Date</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => handleSort('warranty_expiration')}>
+            <Text style={styles.sortMenuItem}>Warranty Expiration</Text>
+          </TouchableOpacity>
+        </View>
+      )}
 
       {/* Display Items */}
       <FlatList
@@ -161,11 +175,6 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     textAlign: 'center',
   },
-  itemContainer: { flexDirection: 'row', justifyContent: 'space-between', padding: 10, borderBottomWidth: 1 },
-  itemDetails: { flex: 1 },
-  itemText: { fontSize: 18, fontWeight: 'bold' },
-  itemSubText: { fontSize: 14, color: 'gray' },
-  emptyText: { fontSize: 16, color: 'gray', textAlign: 'center', marginTop: 20 },
   actionContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -175,5 +184,28 @@ const styles = StyleSheet.create({
   },
   iconButton: {
     padding: 10,
+  },
+  sortMenu: {
+    position: 'absolute',
+    top: 120,
+    left: 20,
+    backgroundColor: '#fff',
+    borderRadius: 5,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    padding: 10,
+    zIndex: 10,
+  },
+  sortMenuItem: {
+    padding: 10,
+    fontSize: 16,
+    color: '#333',
+  },
+  emptyText: { 
+    fontSize: 16, 
+    color: 'gray', 
+    textAlign: 'center', 
+    marginTop: 20 
   },
 });

@@ -128,7 +128,7 @@ const ItemCard: React.FC<ItemCardProps> = ({
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#FBFCF5',
+    backgroundColor: '#FEFFFB',
     padding: 20,
     borderRadius: 10,
     shadowColor: '#000',
@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
     color: '#AF2729',
   },
   valid: {
-    color: '#408617',
+    color: '#399A00',
   },
   optionsButton: {
     position: 'absolute',
