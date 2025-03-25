@@ -5,6 +5,8 @@ import { getInventoryItemsDB, removeItemFromInventoryDB, setupDatabase } from '.
 import { SafeAreaView } from 'react-native-safe-area-context';
 import SearchBar from '../components/SearchBar'; // Import SearchBar component
 import { useRouter } from 'expo-router'; // Import useRouter
+import { useFocusEffect } from '@react-navigation/native';
+import ItemCard from '../components/itemCard'; // Import ItemCard component
 
 export default function HomeScreen() {
   const router = useRouter(); // Use router for navigation
@@ -20,12 +22,13 @@ export default function HomeScreen() {
 
   const [searchQuery, setSearchQuery] = useState(''); // State for search query
   const [filteredItems, setFilteredItems] = useState(items); // State for filtered items
-
-  // Fetch items from database when screen loads
-  useEffect(() => {
-    setupDatabase(); // Ensure DB is set up
-    fetchItems(); // Load items into state
-  }, []);
+  // Fetch items from database when screen loads or when navigating back
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchItems(); // Refresh items on focus
+      return () => {};
+    }, [])
+  );
 
   useEffect(() => {
     // Filter items based on search query
@@ -100,15 +103,15 @@ export default function HomeScreen() {
         data={filteredItems} // Use filtered items
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <View style={styles.itemContainer}>
-            <View style={styles.itemDetails}>
-              <Text style={styles.itemText}>{item.name} - {item.category}</Text>
-              <Text style={styles.itemSubText}>Location: {item.location}</Text>
-              <Text style={styles.itemSubText}>Purchased: {item.purchase_date}</Text>
-              <Text style={styles.itemSubText}>Warranty Exp: {item.warranty_expiration}</Text>
-            </View>
-            <Button title="Delete" onPress={() => handleDelete(item.id)} />
-          </View>
+          <ItemCard
+            id={item.id}
+            name={item.name}
+            category={item.category}
+            location={item.location}
+            purchase_date={item.purchase_date}
+            warranty_expiration={item.warranty_expiration}
+            onItemUpdated={fetchItems} // Pass the refresh callback
+          />
         )}
         ListEmptyComponent={<Text style={styles.emptyText}>No items found.</Text>}
       />
@@ -167,7 +170,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginHorizontal: 20,
+    marginHorizontal: 18,
     marginBottom: 10,
   },
   iconButton: {
